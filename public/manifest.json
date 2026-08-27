@@ -1,0 +1,21 @@
+{
+  "name": "MAXORA — Diagnostic IA Biométrique",
+  "short_name": "MAXORA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#040508",
+  "theme_color": "#040508",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/maxora_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/maxora_app_icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

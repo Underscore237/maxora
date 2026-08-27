@@ -1,0 +1,387 @@
+/* =========================================================
+   GLOW UP — CALM WATER RIPPLES & LUXURY SYSTEM
+   ========================================================= */
+
+:root {
+  --bg-void: #040508;
+  --bg-primary: #080b12;
+  --bg-surface: #0e121d;
+  --bg-elevated: #141a29;
+  --bg-card: rgba(14, 18, 29, 0.76);
+  --bg-card-hover: rgba(20, 26, 42, 0.92);
+  --bg-glass: rgba(12, 16, 26, 0.65);
+
+  /* Couleurs d'accent Or Champagne / Bronze */
+  --gold-50: #FFFDF5;
+  --gold-100: #FEF8E2;
+  --gold-200: #FDECA8;
+  --gold-300: #FCDA6E;
+  --gold-400: #F5C230;
+  --gold-500: #D4AF37; /* Or Royal Pur */
+  --gold-600: #BA9423;
+  --gold-700: #8E6F14;
+  --gold-gradient: linear-gradient(135deg, #FFE899 0%, #D4AF37 45%, #9E7918 100%);
+  --gold-gradient-hover: linear-gradient(135deg, #FFF7D1 0%, #F5C230 45%, #B8921F 100%);
+  --gold-glow: 0 0 25px rgba(212, 175, 55, 0.35);
+  --gold-glow-strong: 0 0 50px rgba(212, 175, 55, 0.65);
+
+  /* Accents Cyber & Sillage Sensuel */
+  --emerald-500: #10B981;
+  --emerald-glow: 0 0 25px rgba(16, 185, 129, 0.45);
+  --cyan-400: #22D3EE;
+  --cyan-glow: 0 0 20px rgba(34, 211, 238, 0.4);
+  --flame-500: #F97316;
+  --flame-glow: 0 0 25px rgba(249, 115, 22, 0.5);
+
+  /* Typographie */
+  --text-primary: #FFFFFF;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-gold: #FDECA8;
+
+  /* Bordures */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-gold: rgba(212, 175, 55, 0.28);
+  --border-gold-bright: rgba(212, 175, 55, 0.7);
+
+  /* Rayons */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+  --radius-full: 9999px;
+
+  /* Ombres */
+  --shadow-subtle: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.75);
+  --shadow-gold: 0 10px 40px rgba(212, 175, 55, 0.28);
+
+  /* Typographies */
+  --font-display: 'Syne', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  /* Transitions */
+  --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Orbes d'ambiance dynamiques */
+.ambient-glow-mesh {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(95px);
+  opacity: 0.28;
+  animation: floatOrb 14s infinite ease-in-out alternate;
+}
+
+.glow-orb-gold {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, #D4AF37 0%, rgba(212, 175, 55, 0) 70%);
+  top: -120px;
+  left: 28%;
+}
+
+.glow-orb-emerald {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, #10B981 0%, rgba(16, 185, 129, 0) 70%);
+  bottom: 10%;
+  right: -90px;
+  animation-duration: 18s;
+  animation-delay: -5s;
+}
+
+.glow-orb-cyan {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, #06B6D4 0%, rgba(6, 182, 212, 0) 70%);
+  top: 38%;
+  left: -90px;
+  animation-duration: 20s;
+  animation-delay: -8s;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(45px, 35px) scale(1.12); }
+  100% { transform: translate(-35px, -45px) scale(0.94); }
+}
+
+/* =========================================================
+   ONDULATIONS D'EAU DOUCES & RELAXANTES (CALM WATER RIPPLES)
+   ========================================================= */
+
+.water-ripple-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+@keyframes calmRippleExpand {
+  0% {
+    width: 0px;
+    height: 0px;
+    opacity: 0.85;
+    border-width: 2.5px;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  30% {
+    opacity: 0.65;
+    border-width: 2px;
+  }
+  70% {
+    opacity: 0.3;
+    border-width: 1.5px;
+  }
+  100% {
+    width: 440px;
+    height: 440px;
+    opacity: 0;
+    border-width: 1px;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.calm-water-ring {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: calmRippleExpand 1.6s cubic-bezier(0.1, 0.7, 0.25, 1) forwards;
+}
+
+.ring-gold {
+  border: 2px solid rgba(253, 224, 71, 0.85);
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.5), inset 0 0 10px rgba(253, 224, 71, 0.3);
+}
+
+.ring-cyan {
+  border: 2px solid rgba(56, 189, 248, 0.85);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.45), inset 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.ring-1 {
+  animation-delay: 0s;
+}
+
+.ring-2 {
+  animation-delay: 0.22s;
+}
+
+.ring-3 {
+  animation-delay: 0.44s;
+}
+
+/* Nappe de fond fluide satinée */
+.water-ripple-target {
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.water-ripple-target.selected {
+  border-color: var(--gold-400);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.25);
+}
+
+.water-ripple-target::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(212, 175, 55, 0.14) 0%, transparent 80%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.water-ripple-target.selected::before {
+  opacity: 1;
+}
+
+/* Typewriter & Titres */
+.typewriter-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 1.1em;
+  background: var(--gold-400);
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: blinkCursor 0.8s infinite;
+  box-shadow: 0 0 10px var(--gold-400);
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.text-gold-gradient {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  background-size: 200% auto;
+  animation: shineGold 3.5s linear infinite;
+}
+
+@keyframes shineGold {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card:hover {
+  border-color: var(--border-gold-bright);
+  box-shadow: var(--shadow-gold), 0 0 30px rgba(212, 175, 55, 0.18);
+  transform: translateY(-2px);
+}
+
+.glass-surface {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: var(--transition-smooth);
+}
+
+.btn-primary {
+  background: var(--gold-gradient);
+  color: #06080E;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 14px 28px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--gold-glow);
+  transition: var(--transition-spring);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: var(--gold-glow-strong);
+  background: var(--gold-gradient-hover);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--gold-400);
+  color: var(--gold-200);
+  transform: translateY(-2px);
+}
+
+.badge-gold {
+  background: rgba(212, 175, 55, 0.14);
+  color: var(--gold-300);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.badge-emerald {
+  background: rgba(16, 185, 129, 0.14);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@keyframes pulseGoldGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+  50% { box-shadow: 0 0 45px rgba(212, 175, 55, 0.7); }
+}
+
+.pulse-glow {
+  animation: pulseGoldGlow 3s infinite ease-in-out;
+}
