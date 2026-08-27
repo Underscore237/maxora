@@ -4,28 +4,26 @@ import { Camera, RefreshCw, Upload, Sparkles, AlertCircle, ArrowLeft, Check, X, 
 export default function CameraScanner({ onPhotoCaptured, onCancel }) {
   const videoRef = useRef(null);
   const [stream, setStream] = useState(null);
-  const [facingMode, setFacingMode] = useState('user'); // 'user' ou 'environment'
+  const [facingMode, setFacingMode] = useState('user');
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [cameraError, setCameraError] = useState(null);
-  const [isAligned, setIsAligned] = useState(false);
   const [tipIndex, setTipIndex] = useState(0);
 
   const tips = [
     "Cadre bien ton visage au centre de l'ovale",
     "Retire ta casquette ou bonnet pour dégager le front",
     "Retire tes lunettes de soleil",
-    "Mets-toi face à la lumière naturelle (pas de contre-jour)"
+    "Mets-toi face à la lumière naturelle"
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTipIndex((prev) => (prev + 1) % tips.length);
-    }, 3000);
+    }, 3200);
     return () => clearInterval(timer);
   }, []);
 
-  // Démarrage robuste et instantané de la caméra
   const startCamera = async (mode = facingMode) => {
     try {
       setCameraError(null);
@@ -43,7 +41,7 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
           },
           audio: false
         });
-      } catch (errConstraint) {
+      } catch (e) {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: mode },
           audio: false
@@ -56,12 +54,12 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         videoRef.current.onloadedmetadata = () => {
-          videoRef.current.play().catch(e => console.log('Autoplay play caught:', e));
+          videoRef.current.play().catch(err => console.log('Autoplay handled:', err));
         };
       }
     } catch (err) {
-      console.warn('Accès caméra impossible, bascule mode upload:', err);
-      setCameraError("Autorise l'accès à ta caméra ou importe une photo nette.");
+      console.warn('Accès caméra:', err);
+      setCameraError("Autorise l'accès caméra ou importe une photo depuis ta galerie.");
       setIsCameraActive(false);
     }
   };
@@ -111,9 +109,7 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
 
   const retakePhoto = () => {
     setCapturedImage(null);
-    if (!isCameraActive) {
-      startCamera(facingMode);
-    }
+    startCamera(facingMode);
   };
 
   const confirmPhoto = () => {
@@ -126,8 +122,8 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
   };
 
   return (
-    <div className="camera-container">
-      {/* 1. BARRE DE COMMANDE SUPÉRIEURE */}
+    <div className="camera-container" style={{ maxWidth: '420px', margin: '0 auto', textAlign: 'center' }}>
+      {/* 1. BARRE SUPÉRIEURE */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', padding: '0 4px' }}>
         <button className="btn-secondary" onClick={onCancel} style={{ padding: '7px 12px', fontSize: '0.82rem', gap: '4px' }}>
           <ArrowLeft size={15} />
@@ -149,18 +145,39 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
         </button>
       </div>
 
-      {/* 2. CADRE DE CAMÉRA PORTRAIT VERTICAL (PROPORTION PARFAITE 3:4) */}
-      <div className="camera-frame-wrapper">
+      {/* 2. CADRE DE CAMÉRA PORTRAIT VERTICAL (PUR & SANS SUPERPOSITIONS) */}
+      <div 
+        className="camera-frame-wrapper"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '360px',
+          margin: '0 auto 16px',
+          aspectRatio: '3/4',
+          height: 'clamp(380px, 60vh, 480px)',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          background: '#04060a',
+          border: '2px solid var(--border-gold)',
+          boxShadow: '0 0 35px rgba(212, 175, 55, 0.25), 0 10px 30px rgba(0, 0, 0, 0.7)'
+        }}
+      >
+        {/* Balise vidéo plein cadre */}
         <video 
           ref={videoRef} 
           autoPlay 
           playsInline 
           muted 
           webkit-playsinline="true"
-          className="camera-video"
           style={{ 
-            display: (isCameraActive && !capturedImage) ? 'block' : 'none',
-            transform: facingMode === 'user' ? 'scaleX(-1)' : 'none' 
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: capturedImage ? 'none' : 'block',
+            transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+            zIndex: 1
           }}
         />
 
@@ -168,37 +185,46 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
           <img 
             src={capturedImage} 
             alt="Capture pour analyse" 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 2 }}
           />
-        ) : isCameraActive ? (
+        ) : (
           <>
-            {/* Ovale de guidage centré */}
-            <div className={`camera-oval-overlay ${isAligned ? 'aligned' : ''}`}>
+            {/* Ovale de cadrage centré */}
+            <div className="camera-oval-overlay" style={{ zIndex: 5 }}>
               <div className="scanner-laser" />
             </div>
 
-            {/* Conseil de positionnement en haut du cadre */}
-            <div className="scanner-guidelines">
+            {/* Bulle conseil légère en haut du cadre */}
+            <div 
+              style={{
+                position: 'absolute',
+                top: '12px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(8, 11, 19, 0.85)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: '1px solid rgba(212, 175, 55, 0.5)',
+                borderRadius: '999px',
+                padding: '6px 14px',
+                color: '#FFF',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                zIndex: 10,
+                whiteSpace: 'nowrap',
+                maxWidth: '92%',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+              }}
+            >
               💡 {tips[tipIndex]}
             </div>
           </>
-        ) : (
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
-            <AlertCircle size={44} color="var(--gold-400)" style={{ marginBottom: '12px' }} />
-            <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Caméra en attente</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', marginBottom: '16px' }}>
-              {cameraError || "Autorise l'accès à ta caméra ou importe une photo nette."}
-            </p>
-            <label className="btn-primary" style={{ cursor: 'pointer', padding: '10px 18px', fontSize: '0.85rem' }}>
-              <Upload size={16} />
-              <span>Importer une photo</span>
-              <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
-            </label>
-          </div>
         )}
       </div>
 
-      {/* 3. CONTRÔLES DE PRISE DE VUE (SÉPARÉS DU CADRE VIDÉO) */}
+      {/* 3. CONTRÔLES DE PRISE DE VUE (SÉPARÉS DU CADRE) */}
       {capturedImage ? (
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '16px' }}>
           <button className="btn-secondary" onClick={retakePhoto} style={{ flex: 1, padding: '12px' }}>
@@ -211,7 +237,7 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', alignItems: 'center', marginBottom: '18px' }}>
+        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'center', marginBottom: '18px' }}>
           <label className="btn-secondary" style={{ padding: '14px', borderRadius: '50%', cursor: 'pointer' }} title="Importer une photo">
             <Upload size={20} />
             <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
@@ -237,14 +263,14 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
         </div>
       )}
 
-      {/* 4. CONSEILS EN BAS SANS SUPERPOSITION */}
+      {/* 4. CONSEILS EN BAS SANS RECOUVREMENT */}
       <div className="glass-surface" style={{ padding: '12px 14px', fontSize: '0.76rem', color: 'var(--text-secondary)', textAlign: 'left', borderRadius: 'var(--radius-md)' }}>
         <div style={{ fontWeight: 700, color: 'var(--gold-300)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <ShieldAlert size={14} />
           <span>Conditions pour un diagnostic IA précis :</span>
         </div>
         <div>✓ Visage de face, centré dans l'ovale et bien éclairé</div>
-        <div>✓ Sans casquette, bonnet ni lunettes</div>
+        <div>✓ Sans casquette, bonnet ni lunettes de soleil</div>
         <div>✓ Expression neutre (bouche fermée)</div>
       </div>
     </div>
