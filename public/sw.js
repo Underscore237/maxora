@@ -1,21 +1,13 @@
-// Service Worker pour la PWA GLOW UP
-const CACHE_NAME = 'glow-up-pwa-v1';
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json'
-];
+// Service Worker MAXORA (Stratégie Network-First pour garantir les mises à jour en direct)
+const CACHE_NAME = 'maxora-cache-v3';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
-  );
+  // Forcer l'activation immédiate sans attendre la fermeture de l'onglet
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
+  // Supprimer automatiquement tous les anciens caches obsolètes
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -25,28 +17,36 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignorer les requêtes API pour garantir des données fraîches
-  if (event.request.url.includes('/api/')) {
+  // Ignorer les requêtes non-GET et les requêtes d'API
+  if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
     return;
   }
 
+  // Stratégie Network-First : toujours chercher la version fraîche en ligne
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {
-        // Mode hors-ligne basique
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
         }
-      });
-    })
+        return networkResponse;
+      })
+      .catch(() => {
+        // En cas d'absence totale de réseau (mode hors-ligne)
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          if (event.request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+        });
+      })
   );
 });
