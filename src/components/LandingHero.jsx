@@ -97,23 +97,25 @@ export default function LandingHero({ onStartScan, onOpenPaywall }) {
       <div className="hero-badge-container">
         <div className="hero-biometric-shield">
           <div className="shield-sparkle-icon">
-            <Sparkles size={13} color="#D4AF37" />
+            <Sparkles size={12} color="#D4AF37" />
           </div>
-          <span className="shield-text">DIAGNOSTIC IA BIOMÉTRIQUE • HARMONIE & STRUCTURE</span>
-          <div className="shield-status-tag">MAXORA AI</div>
+          <span className="shield-text">DIAGNOSTIC IA BIOMÉTRIQUE</span>
+          <span className="shield-divider">•</span>
+          <span className="shield-subtext">HARMONIE 2026</span>
+          <span className="shield-status-tag">AI</span>
         </div>
       </div>
 
       {/* TITRE PRINCIPAL AVEC DOUBLE GRILLE DE LECTURE ANIMÉE */}
-      <h1 className="hero-title" style={{ minHeight: '3.4em', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <span>
+      <h1 className="hero-title">
+        <span className="hero-title-line-1">
           {currentFormula.prefix}{' '}
-          <span className="text-gold-gradient">
+          <span className="text-gold-gradient hero-typewriter-highlight">
             {displayText}
           </span>
           <span className="typewriter-cursor" />
         </span>
-        <span style={{ display: 'block', fontSize: '0.88em', fontWeight: 800 }}>
+        <span className="hero-title-line-2">
           {currentFormula.suffix}
         </span>
       </h1>
@@ -124,14 +126,14 @@ export default function LandingHero({ onStartScan, onOpenPaywall }) {
       </p>
 
       {/* CTA PRINCIPAUX AVEC EFFET RIPPLE */}
-      <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '36px' }}>
-        <button className="btn-primary ripple-btn" onClick={onStartScan} style={{ fontSize: '1.05rem', padding: '15px 32px' }}>
-          <Sparkles size={19} />
+      <div className="hero-cta-group">
+        <button className="btn-primary ripple-btn hero-main-cta" onClick={onStartScan}>
+          <Sparkles size={18} />
           <span>Commencer mon diagnostic gratuit</span>
-          <ArrowRight size={19} />
+          <ArrowRight size={18} />
         </button>
 
-        <button className="btn-secondary ripple-btn" onClick={onOpenPaywall} style={{ fontSize: '0.95rem', padding: '15px 24px' }}>
+        <button className="btn-secondary ripple-btn hero-sec-cta" onClick={onOpenPaywall}>
           <span>Voir les offres & tarifs</span>
         </button>
       </div>

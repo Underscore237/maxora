@@ -28,8 +28,14 @@ yarn-error.log*
 .idea/
 *.suo
 *.ntvs*
-*.njsproj
-*.sln
-*.sw?
-.DS_Store
-Thumbs.db
+# Temporary & Test scripts
+test_*.mjs
+debug_*.mjs
+check_*.mjs
+fetch_task.mjs
+download_image.mjs
+generate_rostand_maxed.mjs
+list_gemini_models.mjs
+sync_user_assets.mjs
+*.jsonl
+rostand_maxed_result.json

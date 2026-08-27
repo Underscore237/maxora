@@ -77,8 +77,8 @@ export default function Header({
           <div className="header-actions">
             {/* Streak Flamme */}
             {user && (
-              <div className="streak-pill">
-                <Flame size={15} color="#F97316" fill="#F97316" />
+              <div className="streak-pill" title="Jours consécutifs">
+                <Flame size={14} color="#F97316" fill="#F97316" />
                 <span>{user.streakDays || 0}j</span>
               </div>
             )}
@@ -88,10 +88,10 @@ export default function Header({
               <button 
                 className="btn-secondary pwa-install-btn" 
                 onClick={onInstallPwa}
-                style={{ padding: '7px 11px', fontSize: '0.78rem', gap: '5px' }}
+                title="Installer l'application"
               >
-                <Download size={13} />
-                <span>Installer</span>
+                <Download size={14} />
+                <span className="pwa-btn-text">Installer</span>
               </button>
             )}
 
@@ -100,14 +100,14 @@ export default function Header({
               <button 
                 className="btn-primary pass-elite-btn" 
                 onClick={onOpenPaywall}
-                style={{ padding: '7px 14px', fontSize: '0.82rem', gap: '5px' }}
+                title="Débloquer le Pass Élite"
               >
-                <Crown size={14} />
-                <span>Pass Élite</span>
+                <Crown size={13} />
+                <span className="pass-btn-text">Pass VIP</span>
               </button>
             ) : (
-              <div className="badge-gold vip-badge-pill" style={{ padding: '5px 10px', fontSize: '0.75rem' }}>
-                <Crown size={13} />
+              <div className="badge-gold vip-badge-pill">
+                <Crown size={12} />
                 <span>VIP</span>
               </div>
             )}
@@ -116,9 +116,10 @@ export default function Header({
             <button 
               className="btn-secondary profile-btn" 
               onClick={onOpenAuth}
-              title="Mon Compte"
+              title="Mon Profil"
+              aria-label="Mon Profil"
             >
-              <User size={17} />
+              <User size={15} />
             </button>
           </div>
         </div>

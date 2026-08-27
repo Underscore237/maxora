@@ -25,14 +25,9 @@ export default function ScoreReport({ analysis, maxedResult, onUnlockProgram, or
     }
   }, [originalImage]);
 
-  // URL IA FLUX Realism 8K directe et garantie
-  const defaultFluxUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent("cinematic ultra-realistic 8k raw photographic portrait of a handsome African man after natural looksmaxing glow up, perfectly defined sculpted jawline, clear radiant luminous smooth skin tone, sharp groomed beard contours, intense magnetic masculine gaze, high cheekbones, luxury studio lighting, photorealistic 8k Hasselblad shot, symmetrical masculine aesthetics")}?model=flux-realism&width=1024&height=1024&nologo=true&enhance=true`;
-  const fluxImg = maxedResult?.url || defaultFluxUrl;
-
-  const beforeImg = originalImage || '/assets/african_man_before.jpg';
-  const afterImg = viewMode === 'flux' 
-    ? fluxImg 
-    : (userMaxedPhoto || '/assets/african_man_after.jpg');
+  const generatedAiImg = maxedResult?.url || userMaxedPhoto;
+  const beforeImg = originalImage;
+  const afterImg = generatedAiImg;
 
   const deltaScore = Math.max(8, potentiel_realiste - score_global);
 

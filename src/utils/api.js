@@ -133,7 +133,7 @@ export async function analyzePhoto(imageBase64, mimeType = 'image/jpeg') {
   };
 }
 
-// 3. Génération d'image FLUX Realism 8K
+// 3. Génération d'image IA Maxée (DashScope prioritaire, Gemini en secours)
 export async function generateMaxedPreview(imageBase64) {
   try {
     const res = await fetch(`${API_BASE}/scan/generate-maxed`, {
@@ -145,22 +145,12 @@ export async function generateMaxedPreview(imageBase64) {
       body: JSON.stringify({ imageBase64 })
     });
     if (res.ok) return await res.json();
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Erreur lors de la génération');
   } catch (e) {
-    // Mode autonome
+    console.error('Erreur API generateMaxedPreview:', e);
+    throw e;
   }
-
-  const seed = Math.floor(Math.random() * 999999);
-  const prompt = `cinematic ultra-realistic 8k raw photographic portrait of a handsome African man after natural looksmaxing glow up, perfectly defined sculpted jawline, clear radiant luminous smooth skin tone, sharp groomed beard contours, intense magnetic masculine gaze, high cheekbones, luxury studio lighting, photorealistic 8k Hasselblad shot, symmetrical masculine aesthetics`;
-  const fluxUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux-realism&width=1024&height=1024&nologo=true&enhance=true&seed=${seed}`;
-
-  return {
-    success: true,
-    result: {
-      url: fluxUrl,
-      provider: 'flux_realism_8k',
-      is_ai_generated: true
-    }
-  };
 }
 
 // 4. Programme quotidien & Tâches
