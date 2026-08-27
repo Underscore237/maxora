@@ -118,11 +118,9 @@ export default function LandingHero({ onStartScan, onOpenPaywall }) {
         </span>
       </h1>
 
-      {/* SOUS-TITRE PRÉCIS & ADAPTÉ */}
+      {/* SOUS-TITRE COURT, ÉLÉGANT & IMPACTANT */}
       <p className="hero-subtitle">
-        Scanne ton visage en 10 secondes. Obtiens ton <strong>score d'harmonie faciale</strong> par IA, 
-        visualise ta transformation réaliste et suis un <strong>programme quotidien sur-mesure</strong> 
-        (Mewing, Savon noir & Karité brut, Décongestion lymphatique, Recettes de parfum local).
+        Scanne ton visage en 10 secondes. Découvre ton <strong>score d'harmonie par IA</strong> et révèle ton potentiel maximal sans artifice.
       </p>
 
       {/* CTA PRINCIPAUX AVEC EFFET RIPPLE */}
