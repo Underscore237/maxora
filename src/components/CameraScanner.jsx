@@ -44,7 +44,6 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
           audio: false
         });
       } catch (errConstraint) {
-        // Fallback sans contrainte de résolution
         mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: mode },
           audio: false
@@ -62,7 +61,7 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
       }
     } catch (err) {
       console.warn('Accès caméra impossible, bascule mode upload:', err);
-      setCameraError("Autorise l'accès à ta caméra ou importe une photo depuis ta galerie.");
+      setCameraError("Autorise l'accès à ta caméra ou importe une photo nette.");
       setIsCameraActive(false);
     }
   };
@@ -76,12 +75,10 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
     };
   }, [facingMode]);
 
-  // Basculer caméra avant/arrière
   const toggleFacingMode = () => {
     setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'));
   };
 
-  // Capturer la photo depuis le flux vidéo
   const capturePhoto = () => {
     if (!videoRef.current) return;
 
@@ -91,7 +88,6 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
     canvas.height = video.videoHeight || 960;
 
     const ctx = canvas.getContext('2d');
-    // Si caméra avant, effet miroir horizontal pour rendu naturel
     if (facingMode === 'user') {
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
@@ -102,7 +98,6 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
     setCapturedImage(base64);
   };
 
-  // Importer un fichier depuis la galerie
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -131,32 +126,31 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
   };
 
   return (
-    <div className="camera-container" style={{ maxWidth: '480px', margin: '0 auto' }}>
-      {/* Barre d'actions supérieure */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-        <button className="btn-secondary" onClick={onCancel} style={{ padding: '8px 14px', fontSize: '0.85rem' }}>
-          <ArrowLeft size={16} />
+    <div className="camera-container">
+      {/* 1. BARRE DE COMMANDE SUPÉRIEURE */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', padding: '0 4px' }}>
+        <button className="btn-secondary" onClick={onCancel} style={{ padding: '7px 12px', fontSize: '0.82rem', gap: '4px' }}>
+          <ArrowLeft size={15} />
           <span>Retour</span>
         </button>
 
-        <div className="badge-gold">
-          <Sparkles size={14} />
+        <div className="badge-gold" style={{ fontSize: '0.75rem', padding: '5px 12px' }}>
+          <Sparkles size={13} />
           <span>Scan IA Biométrique</span>
         </div>
 
         <button 
           className="btn-secondary" 
           onClick={toggleFacingMode} 
-          style={{ padding: '8px 12px', fontSize: '0.85rem' }}
-          title="Changer de caméra (Avant / Arrière)"
+          style={{ padding: '7px 11px' }}
+          title="Changer de caméra"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={15} />
         </button>
       </div>
 
-      {/* Zone de prévisualisation de la caméra */}
+      {/* 2. CADRE DE CAMÉRA PORTRAIT VERTICAL (PROPORTION PARFAITE 3:4) */}
       <div className="camera-frame-wrapper">
-        {/* La balise vidéo est TOUJOURS dans le DOM pour garantir la liaison du flux dès le 1er chargement */}
         <video 
           ref={videoRef} 
           autoPlay 
@@ -171,64 +165,53 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
         />
 
         {capturedImage ? (
-          // Photo capturée / importée
           <img 
             src={capturedImage} 
             alt="Capture pour analyse" 
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : isCameraActive ? (
-          // Ovale de guidage et overlay laser
           <>
+            {/* Ovale de guidage centré */}
             <div className={`camera-oval-overlay ${isAligned ? 'aligned' : ''}`}>
               <div className="scanner-laser" />
             </div>
+
+            {/* Conseil de positionnement en haut du cadre */}
             <div className="scanner-guidelines">
               💡 {tips[tipIndex]}
             </div>
           </>
         ) : (
-          // Fallback si la caméra est refusée
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center' }}>
-            <AlertCircle size={48} color="var(--gold-400)" style={{ marginBottom: '16px' }} />
-            <h3 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>Caméra en attente</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '20px' }}>
-              {cameraError || "Autorise l'accès à ta caméra ou sélectionne une photo nette de face."}
+          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
+            <AlertCircle size={44} color="var(--gold-400)" style={{ marginBottom: '12px' }} />
+            <h3 style={{ fontSize: '1rem', marginBottom: '6px' }}>Caméra en attente</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', marginBottom: '16px' }}>
+              {cameraError || "Autorise l'accès à ta caméra ou importe une photo nette."}
             </p>
-            <label className="btn-primary" style={{ cursor: 'pointer' }}>
-              <Upload size={18} />
-              <span>Choisir une photo de ma galerie</span>
+            <label className="btn-primary" style={{ cursor: 'pointer', padding: '10px 18px', fontSize: '0.85rem' }}>
+              <Upload size={16} />
+              <span>Importer une photo</span>
               <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
             </label>
           </div>
         )}
       </div>
 
-      {/* Règles de cadrage biométrique */}
-      <div className="glass-surface" style={{ padding: '12px 16px', margin: '16px 0', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-        <div style={{ fontWeight: 700, color: 'var(--gold-300)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <ShieldAlert size={14} />
-          <span>Conditions pour un diagnostic IA précis :</span>
-        </div>
-        <div>✓ Visage de face, centré et bien éclairé</div>
-        <div>✓ Sans casquette, bonnet ni lunettes de soleil</div>
-        <div>✓ Expression neutre (bouche fermée)</div>
-      </div>
-
-      {/* Contrôles de capture */}
+      {/* 3. CONTRÔLES DE PRISE DE VUE (SÉPARÉS DU CADRE VIDÉO) */}
       {capturedImage ? (
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-          <button className="btn-secondary" onClick={retakePhoto} style={{ flex: 1 }}>
-            <X size={18} />
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '16px' }}>
+          <button className="btn-secondary" onClick={retakePhoto} style={{ flex: 1, padding: '12px' }}>
+            <X size={17} />
             <span>Reprendre</span>
           </button>
-          <button className="btn-primary" onClick={confirmPhoto} style={{ flex: 1.5 }}>
-            <Check size={18} />
-            <span>Lancer l'analyse IA</span>
+          <button className="btn-primary" onClick={confirmPhoto} style={{ flex: 1.5, padding: '12px' }}>
+            <Check size={17} />
+            <span>Lancer l'analyse</span>
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', alignItems: 'center', marginBottom: '18px' }}>
           <label className="btn-secondary" style={{ padding: '14px', borderRadius: '50%', cursor: 'pointer' }} title="Importer une photo">
             <Upload size={20} />
             <input type="file" accept="image/*" onChange={handleFileUpload} style={{ display: 'none' }} />
@@ -245,14 +228,25 @@ export default function CameraScanner({ onPhotoCaptured, onCancel }) {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              boxShadow: '0 0 30px rgba(212, 175, 55, 0.6)'
+              boxShadow: '0 0 25px rgba(212, 175, 55, 0.65)'
             }}
             title="Prendre la photo"
           >
-            <Camera size={30} color="#000" />
+            <Camera size={28} color="#000" />
           </button>
         </div>
       )}
+
+      {/* 4. CONSEILS EN BAS SANS SUPERPOSITION */}
+      <div className="glass-surface" style={{ padding: '12px 14px', fontSize: '0.76rem', color: 'var(--text-secondary)', textAlign: 'left', borderRadius: 'var(--radius-md)' }}>
+        <div style={{ fontWeight: 700, color: 'var(--gold-300)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <ShieldAlert size={14} />
+          <span>Conditions pour un diagnostic IA précis :</span>
+        </div>
+        <div>✓ Visage de face, centré dans l'ovale et bien éclairé</div>
+        <div>✓ Sans casquette, bonnet ni lunettes</div>
+        <div>✓ Expression neutre (bouche fermée)</div>
+      </div>
     </div>
   );
 }
