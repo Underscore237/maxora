@@ -39,3 +39,5 @@ list_gemini_models.mjs
 sync_user_assets.mjs
 *.jsonl
 rostand_maxed_result.json
+.vercel
+.env*

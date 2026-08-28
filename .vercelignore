@@ -1,0 +1,10 @@
+node_modules
+.git
+.agents
+*.py
+*.mjs
+test_*.mjs
+debug_*.mjs
+check_*.mjs
+*.log
+.env
